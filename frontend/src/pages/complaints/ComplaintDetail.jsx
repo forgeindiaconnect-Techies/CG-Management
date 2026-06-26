@@ -507,12 +507,12 @@ export default function ComplaintDetail() {
               </div>
             </div>
             <div className="pt-3 border-t border-gray-100 flex gap-2">
-              <button className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5">
+              <a href={`mailto:${complaint.user_id?.email || ''}`} className="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100 text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5">
                 <Mail size={14} /> Email
-              </button>
-              <button className="flex-1 px-3 py-2 bg-[#0F766E] text-white hover:bg-[#0d6560] text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5">
+              </a>
+              <a href={complaint.user_id?.phone ? `tel:${complaint.user_id?.phone}` : '#'} onClick={(e) => { if(!complaint.user_id?.phone) { e.preventDefault(); alert('No phone number available for this user.'); } }} className="flex-1 px-3 py-2 bg-[#0F766E] text-white hover:bg-[#0d6560] text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5">
                 <Phone size={14} /> Contact
-              </button>
+              </a>
             </div>
           </div>
 
