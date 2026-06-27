@@ -52,6 +52,7 @@ const exportRoutes = require('./routes/exportRoutes');
 const userRoutes = require('./routes/userRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const supportRoutes = require('./routes/supportRoutes');
+const backupRoutes = require('./routes/backupRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
@@ -61,6 +62,7 @@ app.use('/api/exports', exportRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/support', supportRoutes);
+app.use('/api/backup', backupRoutes);
 
 app.get('/', (req, res) => {
   res.send('Complaint Management API is running...');

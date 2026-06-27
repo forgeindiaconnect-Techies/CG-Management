@@ -7,7 +7,7 @@ import {
   AlertTriangle, Clock, CheckCircle2, Settings, User,
   ClipboardList, BarChart2, Search, Paperclip, Star,
   History, Download, HelpCircle, ChevronRight as ChevronR,
-  RefreshCw, TrendingUp, Shield, Database
+  RefreshCw, TrendingUp, Shield, Database, Moon, Sun
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
@@ -98,6 +98,28 @@ export default function DashboardLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
+
+  const toggleTheme = () => {
+    const newDark = !isDark;
+    setIsDark(newDark);
+    if (newDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    // Also try to update userSettings in localStorage if it exists
+    try {
+      const stored = localStorage.getItem('userSettings');
+      let settings = stored ? JSON.parse(stored) : {};
+      settings.theme = newDark ? 'dark' : 'light';
+      localStorage.setItem('userSettings', JSON.stringify(settings));
+    } catch(e) {}
+  };
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -277,6 +299,15 @@ export default function DashboardLayout() {
           </h1>
 
           <div className="flex items-center gap-2 ml-auto">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl hover:bg-gray-100 transition-colors"
+              title="Toggle Theme"
+            >
+              {isDark ? <Sun size={18} className="text-gray-600" /> : <Moon size={18} className="text-gray-600" />}
+            </button>
+
             {/* Notification Bell */}
             <div ref={notifRef} className="relative">
               <button

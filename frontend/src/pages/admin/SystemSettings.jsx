@@ -9,20 +9,8 @@ export default function SystemSettings() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="font-bold text-gray-800 mb-4">Email Settings</h3>
-          <p className="text-sm text-gray-500">SMTP configuration, email templates.</p>
-        </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="font-bold text-gray-800 mb-4">WhatsApp Settings</h3>
-          <p className="text-sm text-gray-500">API integration for WhatsApp notifications.</p>
-        </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <h3 className="font-bold text-gray-800 mb-4">Theme Settings</h3>
           <p className="text-sm text-gray-500">Custom branding, colors, logos.</p>
-        </div>
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="font-bold text-gray-800 mb-4">Application Settings</h3>
-          <p className="text-sm text-gray-500">General system parameters.</p>
         </div>
       </div>
     </div>
