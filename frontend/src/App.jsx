@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -75,6 +76,18 @@ function RoleComplaints() {
 import { SocketProvider } from './context/SocketContext';
 
 function App() {
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('userSettings');
+      if (stored) {
+        const settings = JSON.parse(stored);
+        if (settings.theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      }
+    } catch (e) {}
+  }, []);
+
   return (
     <AuthProvider>
       <SocketProvider>

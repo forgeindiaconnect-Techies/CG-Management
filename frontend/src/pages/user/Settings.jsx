@@ -22,7 +22,13 @@ export default function Settings() {
   const [saved, setSaved] = useState(false);
 
   const toggle = (key) => setSettings(prev => ({ ...prev, [key]: !prev[key] }));
-  const set = (key, val) => setSettings(prev => ({ ...prev, [key]: val }));
+  const set = (key, val) => {
+    setSettings(prev => ({ ...prev, [key]: val }));
+    if (key === 'theme') {
+      if (val === 'dark') document.documentElement.classList.add('dark');
+      else document.documentElement.classList.remove('dark');
+    }
+  };
 
   const handleSave = () => {
     localStorage.setItem('userSettings', JSON.stringify(settings));
@@ -89,29 +95,6 @@ export default function Settings() {
             </button>
           ))}
         </div>
-        {settings.theme === 'dark' && (
-          <p className="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-            ℹ️ Dark mode is a preference setting. Full dark mode implementation requires additional theming support.
-          </p>
-        )}
-      </div>
-
-      {/* Language */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
-        <h3 className="font-semibold text-gray-800 flex items-center gap-2 text-sm">
-          <Globe size={16} className="text-[#0F766E]" /> Language
-        </h3>
-        <div className="grid grid-cols-3 gap-2">
-          {LANGUAGES.map(lang => (
-            <button key={lang} onClick={() => set('language', lang)}
-              className={`py-2.5 text-sm font-semibold rounded-xl border-2 transition-all ${
-                settings.language === lang ? 'border-[#0F766E] bg-teal-50 text-[#0F766E]' : 'border-gray-100 text-gray-600 hover:border-gray-200'
-              }`}>
-              {lang}
-            </button>
-          ))}
-        </div>
-        <p className="text-xs text-gray-400">Note: Full translations will be available in a future update.</p>
       </div>
 
       <button onClick={handleSave}
