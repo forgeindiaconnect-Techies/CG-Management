@@ -89,8 +89,8 @@ function timeAgo(date) {
 }
 
 function NotifIcon({ status }) {
-  if (status === 'Resolved' || status === 'Closed') return <CheckCircle2 size={14} className="text-green-500" />;
-  if (status === 'In Progress') return <Clock size={14} className="text-amber-500" />;
+  if (status === 'Resolved' || status === 'Closed' || status === 'Replied' || status === 'Read') return <CheckCircle2 size={14} className="text-green-500" />;
+  if (status === 'In Progress' || status === 'New') return <Clock size={14} className="text-amber-500" />;
   return <AlertTriangle size={14} className="text-blue-500" />;
 }
 
@@ -107,23 +107,43 @@ export default function DashboardLayout() {
 
   const items = navItems[user?.role] || navItems['User'];
 
-  // Fetch notifications (recent complaint updates)
+  // Fetch notifications (recent complaint updates & support messages for admins)
   useEffect(() => {
     const fetchNotifs = async () => {
       try {
         const res = await API.get('/complaints');
+        let allItems = res.data.map(c => ({
+          id: c._id,
+          title: c.title,
+          status: c.status,
+          priority: c.priority,
+          updatedAt: c.updatedAt || c.createdAt,
+          type: 'complaint'
+        }));
+
+        if (user?.role === 'Admin') {
+          try {
+            const supportRes = await API.get('/support');
+            const supportItems = supportRes.data.map(s => ({
+              id: s._id,
+              title: `Support: ${s.name}`,
+              status: s.status,
+              priority: 'High',
+              updatedAt: s.createdAt,
+              type: 'support'
+            }));
+            allItems = [...allItems, ...supportItems];
+          } catch (e) {}
+        }
+
         const lastRead = parseInt(localStorage.getItem('lastReadNotifs') || '0', 10);
-        const sorted = res.data
+        const sorted = allItems
           .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
           .slice(0, 15)
-          .map(c => {
-            const time = new Date(c.updatedAt || c.createdAt).getTime();
+          .map(item => {
+            const time = new Date(item.updatedAt).getTime();
             return {
-              id: c._id,
-              title: c.title,
-              status: c.status,
-              priority: c.priority,
-              updatedAt: c.updatedAt || c.createdAt,
+              ...item,
               isNew: (Date.now() - time) < 86400000 && time > lastRead,
             };
           });
@@ -291,7 +311,7 @@ export default function DashboardLayout() {
                     ) : notifications.filter(n => n.isNew).map(n => (
                       <Link
                         key={n.id}
-                        to={`/complaints/${n.id}`}
+                        to={n.type === 'support' ? '/admin/support' : `/complaints/${n.id}`}
                         onClick={(e) => { 
                           e.preventDefault();
                           const nTime = new Date(n.updatedAt).getTime();
@@ -303,7 +323,7 @@ export default function DashboardLayout() {
                           // Optimistically clear badges instantly
                           setNotifications(prev => prev.map(notif => ({ ...notif, isNew: false })));
                           setUnreadCount(0);
-                          navigate(`/complaints/${n.id}`);
+                          navigate(n.type === 'support' ? '/admin/support' : `/complaints/${n.id}`);
                           setNotifOpen(false); 
                         }}
                         className={`block w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors ${n.isNew ? 'bg-teal-50/30' : ''}`}
