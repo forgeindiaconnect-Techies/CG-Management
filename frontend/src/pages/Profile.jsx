@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import API from '../api/axios';
 import {
   User, Mail, Lock, Shield, Building2, CheckCircle2,
-  AlertCircle, Eye, EyeOff, LogOut, Edit3, Save, X
+  AlertCircle, Eye, EyeOff, LogOut, Edit3, Save, X, Phone
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,6 +25,7 @@ export default function Profile() {
   // Form fields
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -44,6 +45,7 @@ export default function Profile() {
         setProfile(res.data);
         setName(res.data.name);
         setEmail(res.data.email);
+        setPhone(res.data.phone || '');
       } catch (err) {
         console.error(err);
       } finally {
@@ -68,13 +70,13 @@ export default function Profile() {
 
     setSaving(true);
     try {
-      const payload = { name, email };
+      const payload = { name, email, phone };
       if (newPassword) payload.password = newPassword;
 
       const res = await API.put('/auth/profile', payload);
 
       // Update the local profile state
-      setProfile(prev => ({ ...prev, name: res.data.name, email: res.data.email }));
+      setProfile(prev => ({ ...prev, name: res.data.name, email: res.data.email, phone: res.data.phone }));
       setSuccess('Profile updated successfully!');
       setEditMode(false);
       setCurrentPassword('');
@@ -98,6 +100,7 @@ export default function Profile() {
     setEditMode(false);
     setName(profile?.name || '');
     setEmail(profile?.email || '');
+    setPhone(profile?.phone || '');
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -219,6 +222,25 @@ export default function Profile() {
               <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
                 <Mail size={14} className="text-gray-400 flex-shrink-0" />
                 <span className="text-sm text-gray-800 font-medium">{profile?.email}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Phone */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-gray-600">Phone Number (Optional)</label>
+            {editMode ? (
+              <input
+                type="tel"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#14B8A6] transition-shadow"
+                placeholder="Enter your phone number"
+              />
+            ) : (
+              <div className="flex items-center gap-3 px-4 py-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                <Phone size={14} className="text-gray-400 flex-shrink-0" />
+                <span className="text-sm text-gray-800 font-medium">{profile?.phone || <span className="text-gray-400 italic">Not provided</span>}</span>
               </div>
             )}
           </div>

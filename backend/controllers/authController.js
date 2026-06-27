@@ -11,7 +11,7 @@ const generateToken = (id, role) => {
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = async (req, res) => {
-  const { name, email, password, role, department_id } = req.body;
+  const { name, email, password, role, department_id, phone } = req.body;
 
   try {
     const userExists = await User.findOne({ email });
@@ -23,6 +23,7 @@ const registerUser = async (req, res) => {
     const user = await User.create({
       name,
       email,
+      phone: phone || '',
       password,
       role: role || 'User',
       department_id: department_id || null
@@ -33,6 +34,7 @@ const registerUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         token: generateToken(user._id, user.role),
       });
@@ -58,6 +60,7 @@ const loginUser = async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         token: generateToken(user._id, user.role),
       });
@@ -95,6 +98,9 @@ const updateUserProfile = async (req, res) => {
 
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
+    if (req.body.phone !== undefined) {
+      user.phone = req.body.phone;
+    }
     if (req.body.password) {
       user.password = req.body.password; // model pre-save hook will hash it
     }
@@ -104,6 +110,7 @@ const updateUserProfile = async (req, res) => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      phone: updatedUser.phone,
       role: updatedUser.role,
       token: generateToken(updatedUser._id, updatedUser.role),
     });

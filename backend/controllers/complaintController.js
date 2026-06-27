@@ -45,7 +45,7 @@ const createComplaint = async (req, res) => {
 
     // Populate complaint before emitting socket event
     const populatedComplaint = await Complaint.findById(complaint._id)
-      .populate('user_id', 'name email')
+      .populate('user_id', 'name email phone')
       .populate('category_id', 'name')
       .populate('department_id', 'name');
 
@@ -76,7 +76,7 @@ const getComplaints = async (req, res) => {
     // Admin gets all complaints (no filter)
 
     const complaints = await Complaint.find(query)
-      .populate('user_id', 'name email')
+      .populate('user_id', 'name email phone')
       .populate('category_id', 'name')
       .populate('department_id', 'name')
       .populate('assigned_to', 'name email')
@@ -98,14 +98,14 @@ const getComplaintById = async (req, res) => {
 
     if (idParam.length === 24) {
       complaint = await Complaint.findById(idParam)
-        .populate('user_id', 'name email')
+        .populate('user_id', 'name email phone')
         .populate('category_id', 'name')
         .populate('department_id', 'name')
         .populate('assigned_to', 'name email');
     } else if (idParam.length === 8) {
       // Fallback for short tracking IDs (last 8 chars of ObjectId)
       const complaints = await Complaint.find()
-        .populate('user_id', 'name email')
+        .populate('user_id', 'name email phone')
         .populate('category_id', 'name')
         .populate('department_id', 'name')
         .populate('assigned_to', 'name email');
