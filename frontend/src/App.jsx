@@ -24,6 +24,7 @@ import AdminReports from './pages/admin/AdminReports';
 import SystemSettings from './pages/admin/SystemSettings';
 import RolesPermissions from './pages/admin/RolesPermissions';
 import BackupRestore from './pages/admin/BackupRestore';
+import SupportMessages from './pages/admin/SupportMessages';
 import NotFound from './pages/NotFound';
 
 import NotificationsPage from './pages/NotificationsPage';
@@ -142,6 +143,7 @@ function App() {
             <Route path="admin/analytics" element={<RoleRoute roles={['Admin']}><AnalyticsDashboard /></RoleRoute>} />
             <Route path="admin/reports" element={<RoleRoute roles={['Admin']}><AdminReports /></RoleRoute>} />
             <Route path="admin/settings" element={<RoleRoute roles={['Admin']}><SystemSettings /></RoleRoute>} />
+            <Route path="admin/support" element={<RoleRoute roles={['Admin']}><SupportMessages /></RoleRoute>} />
             <Route path="admin/roles" element={<RoleRoute roles={['Admin']}><RolesPermissions /></RoleRoute>} />
             <Route path="admin/backup" element={<RoleRoute roles={['Admin']}><BackupRestore /></RoleRoute>} />
             <Route path="admin/audit" element={<RoleRoute roles={['Admin']}><AuditLogs /></RoleRoute>} />

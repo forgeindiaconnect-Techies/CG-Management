@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { HelpCircle, ChevronDown, ChevronUp, Send, Mail, Phone, Book, CheckCircle2 } from 'lucide-react';
+import API from '../../api/axios';
 
 const FAQS = [
   {
@@ -60,12 +61,16 @@ export default function HelpSupport() {
   const [message, setMessage] = useState('');
   const [sent, setSent] = useState(false);
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
-    // Simulate sending
-    setSent(true);
-    setName(''); setEmail(''); setMessage('');
-    setTimeout(() => setSent(false), 3000);
+    try {
+      await API.post('/support', { name, email, message });
+      setSent(true);
+      setName(''); setEmail(''); setMessage('');
+      setTimeout(() => setSent(false), 3000);
+    } catch (err) {
+      alert('Failed to send message. Please try again.');
+    }
   };
 
   return (

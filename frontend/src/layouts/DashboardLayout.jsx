@@ -61,6 +61,7 @@ const navItems = {
     { to: '/admin/analytics', icon: TrendingUp, label: 'Analytics Dashboard' },
     { to: '/admin/reports', icon: BarChart2, label: 'Reports' },
     { to: '/notifications', icon: Bell, label: 'Notifications' },
+    { to: '/admin/support', icon: HelpCircle, label: 'Support Messages' },
     { to: '/feedback', icon: Star, label: 'Feedback Management' },
     { to: '/admin/audit', icon: History, label: 'Audit Logs' },
     { to: '/admin/settings', icon: Settings, label: 'System Settings' },
