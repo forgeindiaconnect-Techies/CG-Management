@@ -43,7 +43,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database connection status middleware
 app.use((req, res, next) => {
-  if (mongoose.connection.readyState !== 1 && req.path.startsWith('/api')) {
+  if (mongoose.connection.readyState !== 1 && req.path.startsWith('/api') && req.path !== '/api/health') {
     return res.status(500).json({ 
       message: 'Database Connection Error: Could not connect to MongoDB Atlas. Please check your MONGO_URI environment variable on Render and allow IP access (0.0.0.0/0) in MongoDB Atlas.',
       readyState: mongoose.connection.readyState
