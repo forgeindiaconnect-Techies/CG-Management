@@ -4,9 +4,14 @@ const User = require('../models/User');
 // GET all departments
 const getDepartments = async (req, res) => {
   try {
-    const departments = await Department.find().populate('head_id', 'name email');
-    res.json(departments);
+    const departments = await Department.find().populate({
+      path: 'head_id',
+      select: 'name email',
+      strictPopulate: false
+    });
+    res.json(departments || []);
   } catch (error) {
+    console.error('getDepartments Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
