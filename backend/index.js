@@ -58,6 +58,8 @@ app.use((req, res, next) => {
   next();
 });
 
+let lastMongoError = null;
+
 // Database connection
 const connectDB = async () => {
   const uri = process.env.MONGO_URI || 'mongodb+srv://forgeindiaconnectfic_db_user:OfBI767sopsL9vSz@cluster0.jgbsrbh.mongodb.net/?appName=Cluster0';
@@ -65,10 +67,11 @@ const connectDB = async () => {
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
     });
+    lastMongoError = null;
     console.log('MongoDB Connected to Remote Atlas');
   } catch (err) {
+    lastMongoError = err.message;
     console.error('Atlas connection failed:', err.message);
-    // Retry connection after 5 seconds
     setTimeout(connectDB, 5000);
   }
 };
@@ -112,7 +115,8 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     dbState: mongoose.connection.readyState,
     dbHost: mongoose.connection.host || 'none',
-    mongoUriConfigured: !!process.env.MONGO_URI
+    mongoUriConfigured: !!process.env.MONGO_URI,
+    lastMongoError
   });
 });
 
