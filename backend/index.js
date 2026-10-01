@@ -113,13 +113,14 @@ app.use('/api/backup', backupRoutes);
 
 app.get('/api/health', (req, res) => {
   const activeUri = process.env.MONGO_URI || 'mongodb+srv://forgeindiaconnectfic_db_user:OfBI767sopsL9vSz@cluster0.jgbsrbh.mongodb.net/cg_management?retryWrites=true&w=majority&appName=Cluster0';
-  const maskedUri = activeUri.replace(/:([^@]+)@/, ':****@');
+  const match = activeUri.match(/mongodb\+srv:\/\/([^:]+):/);
+  const dbUser = match ? match[1] : 'unknown';
   res.json({
     status: 'ok',
     dbState: mongoose.connection.readyState,
     dbHost: mongoose.connection.host || 'none',
     mongoUriConfigured: !!process.env.MONGO_URI,
-    activeUri: maskedUri,
+    dbUser,
     lastMongoError
   });
 });
