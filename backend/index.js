@@ -62,7 +62,8 @@ let lastMongoError = null;
 
 // Database connection
 const connectDB = async () => {
-  const uri = process.env.MONGO_URI || 'mongodb+srv://forgeindiaconnectfic_db_user:OfBI767sopsL9vSz@cluster0.jgbsrbh.mongodb.net/?appName=Cluster0';
+  const defaultUri = 'mongodb+srv://forgeindiaconnectfic_db_user:OfBI767sopsL9vSz@cluster0.jgbsrbh.mongodb.net/cg_management?retryWrites=true&w=majority&appName=Cluster0';
+  const uri = process.env.MONGO_URI || defaultUri;
   try {
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
