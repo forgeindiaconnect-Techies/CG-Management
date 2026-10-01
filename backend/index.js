@@ -53,12 +53,14 @@ const connectDB = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('MongoDB Connected to Remote Atlas');
   } catch (err) {
-    console.error('Atlas connection failed, falling back to local MongoDB:', err.message);
-    try {
-      await mongoose.connect('mongodb://127.0.0.1:27017/cg_management');
-      console.log('MongoDB Connected to Local Database (mongodb://127.0.0.1:27017/cg_management)');
-    } catch (localErr) {
-      console.error('Local MongoDB connection error:', localErr.message);
+    console.error('Atlas connection failed:', err.message);
+    if (process.env.NODE_ENV !== 'production') {
+      try {
+        await mongoose.connect('mongodb://127.0.0.1:27017/cg_management');
+        console.log('MongoDB Connected to Local Database (mongodb://127.0.0.1:27017/cg_management)');
+      } catch (localErr) {
+        console.error('Local MongoDB connection error:', localErr.message);
+      }
     }
   }
 };
