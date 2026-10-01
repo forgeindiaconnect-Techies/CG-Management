@@ -41,6 +41,17 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Database connection status middleware
+app.use((req, res, next) => {
+  if (mongoose.connection.readyState !== 1 && req.path.startsWith('/api')) {
+    return res.status(500).json({ 
+      message: 'Database Connection Error: Could not connect to MongoDB Atlas. Please check your MONGO_URI environment variable on Render and allow IP access (0.0.0.0/0) in MongoDB Atlas.',
+      readyState: mongoose.connection.readyState
+    });
+  }
+  next();
+});
+
 // Attach io to requests so controllers can emit events
 app.use((req, res, next) => {
   req.io = io;
