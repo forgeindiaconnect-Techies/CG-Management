@@ -9,14 +9,35 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+  'http://127.0.0.1:5175',
+].filter(Boolean);
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // allow requests with no origin (like mobile apps, curl) or if origin is in allowed list / localhost regex
+      if (!origin || allowedOrigins.includes(origin) || /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, true); // Allow all origins for dev flexibility
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
   },
 });
 
-app.use(cors());
+app.use(cors({
+  origin: true, // Reflect request origin to allow any dev port
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -27,9 +48,21 @@ app.use((req, res, next) => {
 });
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('MongoDB Connected to Remote Atlas');
+  } catch (err) {
+    console.error('Atlas connection failed, falling back to local MongoDB:', err.message);
+    try {
+      await mongoose.connect('mongodb://127.0.0.1:27017/cg_management');
+      console.log('MongoDB Connected to Local Database (mongodb://127.0.0.1:27017/cg_management)');
+    } catch (localErr) {
+      console.error('Local MongoDB connection error:', localErr.message);
+    }
+  }
+};
+connectDB();
 
 // Socket.io
 io.on('connection', (socket) => {
