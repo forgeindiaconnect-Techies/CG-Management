@@ -60,19 +60,16 @@ app.use((req, res, next) => {
 
 // Database connection
 const connectDB = async () => {
+  const uri = process.env.MONGO_URI || 'mongodb+srv://forgeindiaconnectfic_db_user:OfBI767sopsL9vSz@cluster0.jgbsrbh.mongodb.net/?appName=Cluster0';
   try {
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
+    });
     console.log('MongoDB Connected to Remote Atlas');
   } catch (err) {
     console.error('Atlas connection failed:', err.message);
-    if (process.env.NODE_ENV !== 'production') {
-      try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/cg_management');
-        console.log('MongoDB Connected to Local Database (mongodb://127.0.0.1:27017/cg_management)');
-      } catch (localErr) {
-        console.error('Local MongoDB connection error:', localErr.message);
-      }
-    }
+    // Retry connection after 5 seconds
+    setTimeout(connectDB, 5000);
   }
 };
 connectDB();
